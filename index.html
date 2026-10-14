@@ -1,1033 +1,311 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b1020">
 <title>Adly's AI</title>
-
 <style>
-:root{
-  --bg:#0b1020;
-  --panel:#11182a;
-  --panel2:#17213a;
-  --line:#263451;
-  --text:#edf2ff;
-  --muted:#9eacc8;
-  --accent:#6657ff;
-  --user:#252b45;
-}
+:root{--bg:#0b1020;--panel:#11182a;--panel2:#17213a;--line:#263451;--text:#edf2ff;--muted:#9eacc8;--accent:#6657ff;--user:#252b45}
 *{box-sizing:border-box}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font:15px/1.5 Arial,sans-serif;
-  height:100dvh;
-  overflow:hidden;
-}
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
-.app{
-  height:100dvh;
-  display:grid;
-  grid-template-columns:245px minmax(0,1fr) 265px;
-  grid-template-rows:64px minmax(0,1fr);
-}
-.topbar{
-  grid-column:1/-1;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 18px;
-  border-bottom:1px solid var(--line);
-  background:#0c1222;
-}
-.brand{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size:21px;
-  font-weight:bold;
-}
-.logo{
-  width:38px;height:38px;
-  display:grid;place-items:center;
-  border-radius:12px;
-  background:linear-gradient(135deg,#9b8cff,#4e46ed);
-  font-size:24px;
-}
-.tagline{display:block;font-size:10px;color:var(--muted)}
-.top-actions{display:flex;gap:8px;align-items:center}
-.icon-btn,.small-btn{
-  background:var(--panel2);
-  border:1px solid var(--line);
-  color:var(--text);
-  border-radius:10px;
-  padding:8px 11px;
-}
-.sidebar{
-  background:#0e1526;
-  border-right:1px solid var(--line);
-  padding:15px 12px;
-  overflow:auto;
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-.nav-btn{
-  width:100%;
-  text-align:left;
-  background:transparent;
-  border:1px solid transparent;
-  color:var(--muted);
-  padding:10px 12px;
-  border-radius:10px;
-}
-.nav-btn:hover,.nav-btn.active{
-  background:#5146ec;
-  color:white;
-}
-.section-label{
-  font-size:11px;
-  color:#7889ab;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  margin:17px 8px 5px;
-}
-.pro-card{
-  margin-top:auto;
-  border:1px solid #38366c;
-  background:linear-gradient(145deg,#211f49,#151c33);
-  padding:14px;
-  border-radius:14px;
-}
-.pro-card h3{font-size:14px;margin:0 0 7px}
-.pro-card p{font-size:12px;color:var(--muted)}
-.primary{
-  border:0;
-  background:linear-gradient(135deg,#7767ff,#5146ec);
-  color:white;
-  border-radius:10px;
-  padding:11px 14px;
-  font-weight:bold;
-}
-.full{width:100%}
-.version{font-size:10px;color:#7382a0;margin:10px 7px}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 Arial,sans-serif;height:100dvh;overflow:hidden}
+button,textarea,select{font:inherit}button{cursor:pointer;color:inherit}
+.app{height:100dvh;display:grid;grid-template-columns:225px minmax(0,1fr) 255px;grid-template-rows:62px minmax(0,1fr)}
+header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:#0c1222;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:bold}
+.logo{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(135deg,#9b8cff,#4e46ed);font-size:23px}
+.sub{font-size:10px;color:var(--muted);display:block;font-weight:normal}
+button{border-radius:10px}
+.btn{border:1px solid var(--line);background:var(--panel2);padding:9px 11px}
+.primary{border:0;background:linear-gradient(135deg,#7767ff,#5146ec);padding:11px 15px;font-weight:bold}
+.sidebar,.rightbar{background:#0e1526;padding:13px 11px;overflow:auto}
+.sidebar{border-right:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.nav{border:1px solid transparent;background:transparent;color:var(--muted);padding:10px;text-align:left}
+.nav:hover,.nav.active{background:#5146ec;color:white}
+.label{font-size:11px;color:#8290ad;margin:16px 8px 4px;text-transform:uppercase;letter-spacing:1px}
+.pro{margin-top:auto;padding:13px;border:1px solid #38366c;border-radius:13px;background:#211f49}
+.pro p{font-size:12px;color:var(--muted)}
 .main{min-width:0;display:flex;flex-direction:column;overflow:hidden}
-.chat-scroll{flex:1;overflow:auto;padding:24px clamp(12px,4vw,42px)}
-.welcome{max-width:760px;margin:5px auto 20px}
-.welcome h1{font-size:clamp(25px,3vw,34px);margin:0 0 7px}
-.gradient{
-  background:linear-gradient(90deg,#fff,#a99cff);
-  color:transparent;
-  background-clip:text;
-}
-.subtitle{color:var(--muted);margin:0}
-.model-grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:10px;
-  margin:22px 0;
-}
-.model-card{
-  border:1px solid var(--line);
-  background:#10182a;
-  color:var(--text);
-  border-radius:13px;
-  padding:12px 9px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  text-align:left;
-  min-width:0;
-}
-.model-card.active{
-  border-color:#8174ff;
-  background:#252254;
-  box-shadow:0 0 0 1px #766cff55;
-}
-.model-icon{
-  width:36px;height:36px;
-  flex:0 0 36px;
-  border-radius:11px;
-  display:grid;place-items:center;
-  font-size:21px;
-  background:#19304c;
-}
-.model-name{font-size:13px;font-weight:bold;display:block}
-.model-desc{font-size:10px;color:var(--muted);display:block}
-.mode-row{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 18px}
-.mode-btn{
-  border:1px solid var(--line);
-  background:#121b2e;
-  color:#c4cde1;
-  border-radius:9px;
-  padding:8px 11px;
-  font-size:12px;
-}
-.mode-btn.active{background:#5146ec;color:white}
-.example-box{
-  border:1px solid #283d68;
-  background:#10192b;
-  border-radius:14px;
-  padding:17px;
-  max-width:640px;
-  margin:20px auto;
-}
-.example-box h3{margin:0 0 10px;font-size:14px}
-.examples{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.example{
-  background:#17223a;
-  border:1px solid #2a3857;
-  border-radius:10px;
-  padding:10px;
-  color:#d6def1;
-  text-align:left;
-  font-size:12px;
-}
-.messages{
-  max-width:760px;
-  margin:auto;
-  display:flex;
-  flex-direction:column;
-  gap:15px;
-}
-.message{
-  max-width:92%;
-  border-radius:14px;
-  padding:13px 15px;
-  overflow-wrap:anywhere;
-}
-.message.user{
-  align-self:flex-end;
-  background:var(--user);
-  border:1px solid #3b4263;
-}
-.message.assistant{
-  align-self:flex-start;
-  background:#111a2c;
-  border:1px solid var(--line);
-}
+.scroll{flex:1;overflow:auto;padding:22px clamp(12px,3vw,35px)}
+.welcome,.messages,.composer{max-width:760px;margin-left:auto;margin-right:auto}
+h1{font-size:clamp(25px,3vw,34px);margin:4px 0}
+.muted{color:var(--muted)}
+.models{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:22px 0}
+.model{display:flex;align-items:center;gap:8px;text-align:left;padding:12px 8px;border:1px solid var(--line);background:#10182a}
+.model.active{border-color:#8174ff;background:#252254}
+.mi{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#19304c;font-size:20px}
+.mn{font-size:12px;font-weight:bold;display:block}
+.md{font-size:10px;color:var(--muted);display:block}
+.modes{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 18px}
+.mode{background:#121b2e;border:1px solid var(--line);padding:8px 10px;font-size:12px}
+.mode.active{background:#5146ec}
+.examples{border:1px solid #283d68;background:#10192b;border-radius:14px;padding:15px;margin:18px auto;max-width:640px}
+.example-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.example{background:#17223a;border:1px solid #2a3857;padding:10px;text-align:left;font-size:12px}
+.messages{display:flex;flex-direction:column;gap:14px}
+.msg{max-width:94%;padding:13px 15px;border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.user{align-self:flex-end;background:var(--user);border:1px solid #3b4263}
+.msg.ai{align-self:flex-start;background:#111a2c;border:1px solid var(--line)}
 .who{font-size:11px;color:#a99cff;font-weight:bold;margin-bottom:5px}
-.body{white-space:pre-wrap}
-.composer-wrap{padding:10px 20px 13px}
-.composer{
-  max-width:760px;
-  margin:auto;
-  border:1px solid #344364;
-  background:#11182a;
-  border-radius:15px;
-  padding:9px;
-}
-.composer textarea{
-  display:block;
-  width:100%;
-  resize:vertical;
-  min-height:48px;
-  max-height:150px;
-  background:transparent;
-  border:0;
-  outline:none;
-  color:var(--text);
-  padding:8px;
-}
-.composer-bottom{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:8px;
-}
-.send{
-  border:0;background:var(--accent);
-  color:white;border-radius:10px;
-  padding:10px 15px;font-weight:bold;
-}
-.hint{text-align:center;font-size:10px;color:#7584a3;margin:8px}
-.rightbar{
-  background:#0e1526;
-  border-left:1px solid var(--line);
-  padding:14px 11px;
-  overflow:auto;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-.panel{
-  border:1px solid var(--line);
-  background:#11192b;
-  border-radius:13px;
-  padding:12px;
-}
-.panel-head{
-  display:flex;align-items:center;
-  justify-content:space-between;
-  font-size:13px;font-weight:bold;
-  margin-bottom:10px;
-}
-.text-link{background:none;border:0;color:#9a91ff;font-size:11px}
-.history-list{display:flex;flex-direction:column;gap:5px}
-.history-item{
-  display:flex;align-items:center;gap:8px;
-  padding:9px 6px;border-radius:9px;
-}
-.history-item:hover{background:#1a2540}
-.history-symbol{
-  width:29px;height:29px;
-  display:grid;place-items:center;
-  border-radius:9px;background:#193d50;
-}
-.history-text{min-width:0;flex:1;cursor:pointer}
-.history-title{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.history-sub{font-size:10px;color:var(--muted)}
-.history-delete{border:0;background:none;color:#8794b0}
-.api-note{font-size:12px;color:var(--muted)}
-.status{font-size:12px;margin:8px 0}
-.dot{color:#42d99b}
-.service{
-  display:flex;justify-content:space-between;
-  padding:8px 0;font-size:11px;
-  border-bottom:1px solid #202b42;
-}
-.service small{color:#42d99b}
-.quote{
-  background:linear-gradient(135deg,#171e42,#30205c);
-  border-color:#4841b2;
-  font-size:12px;
-}
-.modal-backdrop{
-  position:fixed;inset:0;background:#0009;
-  display:none;align-items:center;justify-content:center;
-  padding:16px;z-index:20;
-}
-.modal-backdrop.show{display:flex}
-.modal{
-  width:min(480px,100%);max-height:90dvh;overflow:auto;
-  background:#121a2c;border:1px solid var(--line);
-  border-radius:16px;padding:20px;
-}
-.modal h2{margin:0 0 8px}
-.modal p{font-size:13px;color:var(--muted)}
-.modal label{display:block;font-size:12px;margin:13px 0 6px}
-.modal input,.modal select{
-  width:100%;padding:11px;border-radius:9px;
-  border:1px solid var(--line);
-  background:#0b1222;color:var(--text);
-}
-.notice{
-  padding:10px;border:1px solid #7b6232;
-  background:#332a1b;color:#f5d89b;
-  border-radius:9px;font-size:12px;
-}
-.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
-.mobile-menu{display:none}
-body.light{
-  --bg:#f3f5fb;--panel:#fff;--panel2:#e9edfa;
-  --line:#d6dcec;--text:#1a2340;--muted:#62708d;
-  --user:#e1e5f5;
-}
-body.light .topbar,body.light .sidebar,body.light .rightbar{background:#f9faff}
-body.light .model-card,body.light .example-box,body.light .example,
-body.light .panel,body.light .composer,body.light .message.assistant{background:white}
-@media(max-width:1050px){
-  .app{grid-template-columns:220px minmax(0,1fr)}
-  .rightbar{display:none}
-}
-@media(max-width:680px){
-  .app{grid-template-columns:1fr;grid-template-rows:58px minmax(0,1fr)}
-  .topbar{padding:0 10px}
-  .brand{font-size:17px}
-  .logo{width:33px;height:33px}
-  .mobile-menu{display:inline-block}
-  .sidebar{
-    position:fixed;z-index:10;left:0;top:58px;bottom:0;
-    width:255px;transform:translateX(-105%);
-    box-shadow:10px 0 35px #0005;transition:transform .2s;
-  }
-  .sidebar.open{transform:translateX(0)}
-  .main{grid-column:1}
-  .chat-scroll{padding:15px 12px}
-  .model-grid{gap:6px}
-  .model-card{display:block;text-align:center;padding:9px 5px}
-  .model-icon{margin:0 auto 5px;width:32px;height:32px}
-  .model-name{font-size:11px}
-  .model-desc{font-size:9px}
-  .examples{grid-template-columns:1fr}
-  .example-box{padding:13px}
-  .composer-wrap{padding:8px 10px}
-  .profile{display:none}
+.composer-wrap{padding:10px 14px 12px}
+.composer{border:1px solid #344364;background:#11182a;border-radius:15px;padding:9px}
+textarea{width:100%;min-height:55px;max-height:150px;resize:vertical;background:transparent;color:var(--text);border:0;outline:0;padding:8px}
+.composer-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hint{text-align:center;font-size:10px;color:#7584a3;margin:7px}
+.rightbar{border-left:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
+.panel{border:1px solid var(--line);background:#11192b;border-radius:13px;padding:12px}
+.panel-title{font-size:13px;font-weight:bold;margin-bottom:10px}
+.history-item{display:flex;gap:8px;padding:9px 3px;border-bottom:1px solid #202b42;align-items:center}
+.history-title{font-size:11px;flex:1;overflow-wrap:anywhere;cursor:pointer}
+.del{border:0;background:transparent;color:var(--muted)}
+.status{font-size:11px;padding:7px 0;border-bottom:1px solid #202b42}
+.good{color:#42d99b}.warn{color:#f4c76a}
+.backdrop{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;padding:15px;z-index:9}
+.backdrop.show{display:flex}
+.modal{width:min(450px,100%);background:#121a2c;border:1px solid var(--line);border-radius:15px;padding:20px}
+.modal input,.modal select{width:100%;margin:6px 0 12px;padding:11px;border:1px solid var(--line);border-radius:9px;background:#0b1222;color:var(--text)}
+.modal p{font-size:12px;color:var(--muted)}
+body.light{--bg:#f3f5fb;--panel:#fff;--panel2:#e9edfa;--line:#d6dcec;--text:#1a2340;--muted:#62708d;--user:#e1e5f5}
+body.light header,body.light .sidebar,body.light .rightbar{background:#f9faff}
+body.light .panel,body.light .model,body.light .examples,body.light .example,body.light .composer,body.light .msg.ai{background:white}
+.mobile{display:none}
+@media(max-width:1000px){.app{grid-template-columns:210px minmax(0,1fr)}.rightbar{display:none}}
+@media(max-width:650px){
+ .app{grid-template-columns:1fr;grid-template-rows:58px minmax(0,1fr)}
+ header{padding:0 9px}.brand{font-size:17px}.logo{width:33px;height:33px}
+ .mobile{display:inline-block}
+ .sidebar{position:fixed;z-index:8;top:58px;bottom:0;left:0;width:250px;transform:translateX(-105%);transition:transform .2s;box-shadow:10px 0 30px #0006}
+ .sidebar.open{transform:translateX(0)}
+ .scroll{padding:14px 11px}
+ .model{display:block;text-align:center;padding:8px 3px}
+ .mi{margin:auto auto 5px}.mn{font-size:11px}.md{font-size:9px}
+ .example-grid{grid-template-columns:1fr}
+ .composer-wrap{padding:8px}
 }
 </style>
 </head>
-
 <body>
 <div class="app">
-
-<header class="topbar">
-  <div style="display:flex;align-items:center;gap:10px">
-    <button class="icon-btn mobile-menu" id="menuToggle">☰</button>
-    <div class="brand">
-      <div class="logo">A</div>
-      <div>Adly's AI
-        <span class="tagline">Satu Tempat, Tiga Kecerdasan</span>
-      </div>
-    </div>
+<header>
+  <div style="display:flex;align-items:center;gap:9px">
+    <button class="btn mobile" id="menu">☰</button>
+    <div class="brand"><div class="logo">A</div><div>Adly's AI<span class="sub">Satu Tempat, Tiga Kecerdasan</span></div></div>
   </div>
-  <div class="top-actions">
-    <button class="icon-btn" id="themeToggle" title="Ganti tema">☼</button>
-    <button class="icon-btn" id="apiTopBtn" title="Pengaturan API">⚙</button>
+  <div style="display:flex;gap:7px">
+    <button class="btn" id="theme">☼</button>
+    <button class="btn" id="settings">⚙</button>
   </div>
 </header>
 
 <aside class="sidebar" id="sidebar">
-  <button class="nav-btn active" data-page="chat">▣ &nbsp; Chat AI</button>
-  <button class="nav-btn" id="historyNav">◷ &nbsp; Riwayat Chat</button>
-  <button class="nav-btn" id="modeNav">✣ &nbsp; Mode AI</button>
-  <button class="nav-btn" id="settingsNav">⚙ &nbsp; Pengaturan</button>
-  <button class="nav-btn" id="apiNav">⚿ &nbsp; API & Koneksi</button>
-  <button class="nav-btn" id="aboutNav">ⓘ &nbsp; Tentang</button>
-
-  <div class="section-label">Mode cepat</div>
-  <button class="nav-btn quick-mode" data-mode="Belajar">♧ &nbsp; Belajar</button>
-  <button class="nav-btn quick-mode" data-mode="Coding">⌘ &nbsp; Coding</button>
-  <button class="nav-btn quick-mode" data-mode="Menulis">✎ &nbsp; Menulis</button>
-  <button class="nav-btn quick-mode" data-mode="Matematika">∑ &nbsp; Matematika</button>
-  <button class="nav-btn quick-mode" data-mode="Analisis">▥ &nbsp; Analisis</button>
-
-  <div class="pro-card">
-    <h3>👑 Adly's AI Pro</h3>
-    <p>Satu antarmuka untuk berbagai model AI. Hubungkan API resmi untuk menggunakan model sungguhan.</p>
-    <button class="primary full" id="upgradeBtn">Atur Koneksi AI</button>
+  <button class="nav active" id="navChat">▣ &nbsp; Chat AI</button>
+  <button class="nav" id="navHistory">◷ &nbsp; Riwayat Chat</button>
+  <button class="nav" id="navModes">✣ &nbsp; Mode AI</button>
+  <button class="nav" id="navApi">⚿ &nbsp; API & Koneksi</button>
+  <div class="label">Mode cepat</div>
+  <button class="nav quick" data-mode="Belajar">♧ &nbsp; Belajar</button>
+  <button class="nav quick" data-mode="Coding">⌘ &nbsp; Coding</button>
+  <button class="nav quick" data-mode="Menulis">✎ &nbsp; Menulis</button>
+  <button class="nav quick" data-mode="Matematika">∑ &nbsp; Matematika</button>
+  <button class="nav quick" data-mode="Analisis">▥ &nbsp; Analisis</button>
+  <div class="pro">
+    <b>👑 Adly's AI Pro</b>
+    <p>Pilih model AI dan hubungkan API resmi melalui backend.</p>
+    <button class="primary" id="connect">Atur Koneksi AI</button>
   </div>
-  <div class="version">Adly's AI · v1.0.0<br>Dibuat untuk belajar dan produktivitas.</div>
+  <small class="muted">Adly's AI · v2.0</small>
 </aside>
 
 <main class="main">
-  <section class="chat-scroll" id="chatScroll">
-    <div class="welcome" id="welcome">
-      <h1>Selamat datang di <span class="gradient">Adly's AI</span> ✨</h1>
-      <p class="subtitle">Satu tempat untuk belajar, berkarya, coding, dan menemukan ide.</p>
-
-      <div class="model-grid">
-        <button class="model-card active" data-model="ChatGPT">
-          <span class="model-icon">◎</span>
-          <span><span class="model-name">ChatGPT</span><span class="model-desc">OpenAI API</span></span>
-        </button>
-        <button class="model-card" data-model="Gemini">
-          <span class="model-icon">✦</span>
-          <span><span class="model-name">Gemini</span><span class="model-desc">Google AI API</span></span>
-        </button>
-        <button class="model-card" data-model="Claude">
-          <span class="model-icon">✳</span>
-          <span><span class="model-name">Claude</span><span class="model-desc">Anthropic API</span></span>
-        </button>
-      </div>
-
-      <strong style="font-size:13px">Pilih mode AI</strong>
-      <div class="mode-row" id="modeRow">
-        <button class="mode-btn active" data-mode="Default">✧ Default</button>
-        <button class="mode-btn" data-mode="Belajar">♧ Belajar</button>
-        <button class="mode-btn" data-mode="Coding">⌘ Coding</button>
-        <button class="mode-btn" data-mode="Menulis">✎ Menulis</button>
-        <button class="mode-btn" data-mode="Matematika">∑ Matematika</button>
-        <button class="mode-btn" data-mode="Analisis">▥ Analisis</button>
-      </div>
-
-      <div class="example-box">
-        <h3>💡 Coba tanyakan sesuatu</h3>
-        <div class="examples">
-          <button class="example">Jelaskan HTML untuk pemula dengan sederhana</button>
-          <button class="example">Buatkan rencana belajar akuntansi</button>
-          <button class="example">Bantu saya menulis email profesional</button>
-          <button class="example">Bantu pecahkan soal matematika</button>
-        </div>
+<div class="scroll" id="scroll">
+  <section class="welcome" id="welcome">
+    <h1>Selamat datang di <span style="color:#a99cff">Adly's AI</span> ✨</h1>
+    <p class="muted">Satu tempat untuk belajar, berkarya, coding, dan menemukan ide.</p>
+    <div class="models">
+      <button class="model active" data-model="openai"><span class="mi">◎</span><span class="mn">ChatGPT</span><span class="md">OpenAI</span></button>
+      <button class="model" data-model="gemini"><span class="mi">✦</span><span class="mn">Gemini</span><span class="md">Google</span></button>
+      <button class="model" data-model="claude"><span class="mi">✳</span><span class="mn">Claude</span><span class="md">Anthropic</span></button>
+    </div>
+    <b style="font-size:13px">Pilih mode AI</b>
+    <div class="modes" id="modes">
+      <button class="mode active" data-mode="Default">✧ Default</button>
+      <button class="mode" data-mode="Belajar">♧ Belajar</button>
+      <button class="mode" data-mode="Coding">⌘ Coding</button>
+      <button class="mode" data-mode="Menulis">✎ Menulis</button>
+      <button class="mode" data-mode="Matematika">∑ Matematika</button>
+      <button class="mode" data-mode="Analisis">▥ Analisis</button>
+    </div>
+    <div class="examples">
+      <b>💡 Coba tanyakan sesuatu</b>
+      <div class="example-grid" style="margin-top:10px">
+        <button class="example">Jelaskan HTML untuk pemula</button>
+        <button class="example">Buat rencana belajar akuntansi</button>
+        <button class="example">Bantu menulis email profesional</button>
+        <button class="example">Bantu pecahkan soal matematika</button>
       </div>
     </div>
-    <div class="messages" id="messages"></div>
   </section>
-
-  <div class="composer-wrap">
-    <form class="composer" id="chatForm">
-      <textarea id="prompt" placeholder="Ketik pesan Anda di sini..." rows="2"></textarea>
-      <div class="composer-bottom">
-        <div>
-          <span style="font-size:11px;color:var(--muted)" id="selectedInfo">ChatGPT · Default</span>
-          <button type="button" class="small-btn" id="newChatBtn">＋ Baru</button>
-        </div>
-        <button class="send" id="sendBtn" type="submit">Kirim ➤</button>
+  <section class="messages" id="messages"></section>
+</div>
+<div class="composer-wrap">
+  <form class="composer" id="form">
+    <textarea id="prompt" placeholder="Ketik pesan Anda di sini..." required></textarea>
+    <div class="composer-bottom">
+      <span class="muted" style="font-size:11px" id="selected">ChatGPT · Default</span>
+      <div style="display:flex;gap:7px">
+        <button type="button" class="btn" id="new">＋ Baru</button>
+        <button class="primary" id="send">Kirim ➤</button>
       </div>
-    </form>
-    <p class="hint">Enter untuk mengirim · Shift + Enter untuk baris baru</p>
-  </div>
+    </div>
+  </form>
+  <p class="hint">Enter untuk mengirim · Shift + Enter untuk baris baru</p>
+</div>
 </main>
 
 <aside class="rightbar">
   <section class="panel">
-    <div class="panel-head">
-      <span>◷ Riwayat Chat</span>
-      <button class="text-link" id="viewHistory">Lihat Semua</button>
-    </div>
-    <div class="history-list" id="historyList"></div>
+    <div class="panel-title">◷ Riwayat Chat</div>
+    <div id="history"></div>
   </section>
-
   <section class="panel">
-    <div class="panel-head">⚙ Pengaturan API</div>
-    <p class="api-note">Hubungkan API resmi agar model AI dapat menjawab pertanyaan.</p>
-    <button class="small-btn full" id="manageApiBtn">⚿ Kelola API & Koneksi</button>
+    <div class="panel-title">● Status koneksi</div>
+    <div class="status">ChatGPT / OpenAI <span class="good" id="s-openai">●</span></div>
+    <div class="status">Gemini / Google <span class="good" id="s-gemini">●</span></div>
+    <div class="status">Claude / Anthropic <span class="good" id="s-claude">●</span></div>
+    <p class="muted" style="font-size:11px">Status indikator menunjukkan konfigurasi server, bukan jaminan API aktif.</p>
+    <button class="btn" id="apiButton">⚙ Pengaturan API</button>
   </section>
-
-  <section class="panel">
-    <div class="panel-head">● Status Layanan</div>
-    <div class="status"><span class="dot">●</span> <span id="serviceStatus">Antarmuka siap digunakan</span></div>
-    <div class="service"><span>◎ ChatGPT</span><small id="statusChatGPT">Belum terhubung</small></div>
-    <div class="service"><span>✦ Gemini</span><small id="statusGemini">Belum terhubung</small></div>
-    <div class="service"><span>✳ Claude</span><small id="statusClaude">Belum terhubung</small></div>
-  </section>
-
-  <section class="panel quote">
-    “Ide besar berawal dari pertanyaan kecil.”
-    <br><br><strong>— Adly's AI</strong>
-  </section>
+  <section class="panel"><b>Adly's AI</b><p class="muted" style="font-size:12px">“Ide besar berawal dari pertanyaan kecil.”</p></section>
 </aside>
 </div>
 
-<div class="modal-backdrop" id="apiModal">
-  <div class="modal" role="dialog" aria-modal="true">
-    <h2>Pengaturan Koneksi AI</h2>
-    <p>Pilih penyedia model dan masukkan URL backend milik Anda.</p>
-    <div class="notice">
-      Jangan menyimpan API key rahasia di HTML publik. Simpan API key di server/backend.
-    </div>
-    <label for="provider">Penyedia model</label>
-    <select id="provider">
-      <option>ChatGPT</option>
-      <option>Gemini</option>
-      <option>Claude</option>
-    </select>
-    <label for="endpoint">URL endpoint backend</label>
-    <input id="endpoint" type="url" placeholder="https://domain-anda.com/api/chat">
-    <label for="modelName">Nama model (opsional)</label>
-    <input id="modelName" placeholder="Nama model di backend">
-    <p>Endpoint harus menerima JSON berisi message, model, mode, instruction, dan history; lalu mengembalikan JSON dengan properti reply.</p>
-    <div class="modal-actions">
-      <button class="small-btn" id="closeModal">Batal</button>
-      <button class="primary" id="saveApi">Simpan</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-backdrop" id="infoModal">
-  <div class="modal">
-    <h2 id="infoTitle">Tentang Adly's AI</h2>
-    <p id="infoBody"></p>
-    <div class="modal-actions">
-      <button class="primary" id="closeInfo">Mengerti</button>
-    </div>
-  </div>
+<div class="backdrop" id="modal">
+ <div class="modal">
+  <h2>Pengaturan API</h2>
+  <p>API key disimpan di Vercel Environment Variables. Tidak perlu dimasukkan di sini.</p>
+  <label for="modelSelect">Model AI</label>
+  <select id="modelSelect">
+   <option value="openai">ChatGPT / OpenAI</option>
+   <option value="gemini">Gemini / Google</option>
+   <option value="claude">Claude / Anthropic</option>
+  </select>
+  <p>Nama model dan API key diatur pada backend. Untuk petunjuk, lihat penjelasan setelah kode.</p>
+  <button class="primary" id="closeModal">Selesai</button>
+ </div>
 </div>
 
 <script>
-"use strict";
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+const HISTORY_KEY="adlys-multi-ai-history";
+let provider="openai", mode="Default", currentId=null, busy=false;
+let chats=[];
+try{chats=JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]")}catch{chats=[]}
 
-const $ = selector => document.querySelector(selector);
-const $$ = selector => [...document.querySelectorAll(selector)];
-
-const DATA_KEY = "adlys-ai-history";
-const CONFIG_KEY = "adlys-ai-config";
-
-let selectedModel = "ChatGPT";
-let selectedMode = "Default";
-let currentChatId = null;
-let busy = false;
-
-function readStorage(key, fallback){
-  try {
-    const value = localStorage.getItem(key);
-    return value ? JSON.parse(value) : fallback;
-  } catch {
-    return fallback;
-  }
+const names={openai:"ChatGPT",gemini:"Gemini",claude:"Claude"};
+const instructions={
+ Default:"Jawab dengan jelas, akurat, dan membantu.",
+ Belajar:"Jelaskan seperti tutor yang sabar, bertahap, dan beri contoh.",
+ Coding:"Bertindak sebagai mentor pemrograman. Berikan kode yang rapi dan jelaskan cara menjalankannya.",
+ Menulis:"Bantu menulis dengan bahasa alami, jelas, dan sesuai konteks.",
+ Matematika:"Jelaskan langkah perhitungan dengan runtut dan periksa hasilnya.",
+ Analisis:"Berikan analisis terstruktur, jelaskan asumsi, lalu simpulkan."
+};
+function save(){localStorage.setItem(HISTORY_KEY,JSON.stringify(chats))}
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function chat(){return chats.find(c=>c.id===currentId)}
+function updateInfo(){$("#selected").textContent=names[provider]+" · "+mode}
+function chooseProvider(p){
+ provider=p;
+ $$(".model").forEach(b=>b.classList.toggle("active",b.dataset.model===p));
+ updateInfo();
 }
-
-let appData = readStorage(DATA_KEY, {chats:[]});
-let apiConfig = readStorage(CONFIG_KEY, {});
-
-function saveHistory(){
-  localStorage.setItem(DATA_KEY, JSON.stringify(appData));
+function chooseMode(m){
+ mode=m;
+ $$(".mode").forEach(b=>b.classList.toggle("active",b.dataset.mode===m));
+ updateInfo();
 }
-
-function saveConfig(){
-  localStorage.setItem(CONFIG_KEY, JSON.stringify(apiConfig));
+function closeSidebar(){$("#sidebar").classList.remove("open")}
+function render(){
+ const c=chat(), area=$("#messages");
+ area.innerHTML="";
+ $("#welcome").style.display=c&&c.messages.length?"none":"block";
+ if(c)c.messages.forEach(m=>{
+  const el=document.createElement("div");
+  el.className="msg "+(m.role==="user"?"user":"ai");
+  const who=document.createElement("div");
+  who.className="who";who.textContent=m.role==="user"?"Anda":(names[m.provider]||"Adly's AI");
+  const body=document.createElement("div");
+  body.textContent=m.content;
+  el.append(who,body);area.appendChild(el);
+ });
+ $("#scroll").scrollTop=$("#scroll").scrollHeight;
+ renderHistory();
 }
-
-function makeId(){
-  return Date.now().toString(36) + Math.random().toString(36).slice(2,8);
-}
-
-function escapeHTML(value){
-  return String(value).replace(/[&<>"']/g, char => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-  })[char]);
-}
-
-function currentChat(){
-  return appData.chats.find(chat => chat.id === currentChatId);
-}
-
-function updateSelectedInfo(){
-  $("#selectedInfo").textContent = selectedModel + " · " + selectedMode;
-}
-
-function setModel(name){
-  selectedModel = name;
-  $$(".model-card").forEach(button =>
-    button.classList.toggle("active", button.dataset.model === name)
-  );
-  updateSelectedInfo();
-}
-
-function setMode(name){
-  selectedMode = name;
-  $$(".mode-btn").forEach(button =>
-    button.classList.toggle("active", button.dataset.mode === name)
-  );
-  updateSelectedInfo();
-}
-
-function modeInstruction(){
-  const instructions = {
-    Default:"Jawab dengan jelas, akurat, dan membantu.",
-    Belajar:"Jelaskan seperti tutor yang sabar, bertahap, dan sertakan contoh sederhana.",
-    Coding:"Bertindak sebagai mentor pemrograman. Berikan kode yang rapi dan jelaskan cara menjalankannya.",
-    Menulis:"Bantu menulis dengan bahasa alami, jelas, dan sesuai konteks.",
-    Matematika:"Uraikan langkah perhitungan secara runtut dan periksa hasilnya.",
-    Analisis:"Buat analisis terstruktur, jelaskan asumsi, dan berikan kesimpulan."
-  };
-  return instructions[selectedMode] || instructions.Default;
-}
-
-function renderMessages(){
-  const chat = currentChat();
-  $("#messages").innerHTML = "";
-  $("#welcome").style.display =
-    chat && chat.messages.length ? "none" : "block";
-
-  if(!chat) return;
-
-  chat.messages.forEach(message => {
-    const article = document.createElement("article");
-    article.className = "message " +
-      (message.role === "user" ? "user" : "assistant");
-
-    const who = document.createElement("div");
-    who.className = "who";
-    who.textContent = message.role === "user"
-      ? "Anda"
-      : (message.model || selectedModel);
-
-    const body = document.createElement("div");
-    body.className = "body";
-    body.textContent = message.content;
-
-    article.append(who, body);
-    $("#messages").appendChild(article);
-  });
-
-  $("#chatScroll").scrollTop = $("#chatScroll").scrollHeight;
-}
-
 function renderHistory(){
-  const list = $("#historyList");
-  list.innerHTML = "";
-
-  const chats = [...appData.chats].sort((a,b) => b.updated - a.updated);
-
-  if(!chats.length){
-    list.innerHTML =
-      '<div style="font-size:11px;color:var(--muted)">Belum ada percakapan.</div>';
-    return;
-  }
-
-  chats.slice(0,10).forEach(chat => {
-    const item = document.createElement("div");
-    item.className = "history-item";
-
-    const symbol = document.createElement("span");
-    symbol.className = "history-symbol";
-    symbol.textContent = "✦";
-
-    const info = document.createElement("div");
-    info.className = "history-text";
-
-    const title = document.createElement("div");
-    title.className = "history-title";
-    title.textContent = chat.title || "Percakapan baru";
-
-    const sub = document.createElement("div");
-    sub.className = "history-sub";
-    sub.textContent = (chat.model || "AI") + " · " +
-      new Date(chat.updated).toLocaleDateString("id-ID");
-
-    info.append(title,sub);
-    info.addEventListener("click", () => openChat(chat.id));
-
-    const del = document.createElement("button");
-    del.className = "history-delete";
-    del.textContent = "×";
-    del.title = "Hapus percakapan";
-    del.addEventListener("click", () => {
-      if(!confirm("Hapus percakapan ini?")) return;
-      appData.chats = appData.chats.filter(c => c.id !== chat.id);
-      if(currentChatId === chat.id) currentChatId = null;
-      saveHistory();
-      renderHistory();
-      renderMessages();
-    });
-
-    item.append(symbol,info,del);
-    list.appendChild(item);
-  });
+ const area=$("#history");area.innerHTML="";
+ [...chats].sort((a,b)=>b.updated-a.updated).slice(0,12).forEach(c=>{
+  const row=document.createElement("div");row.className="history-item";
+  const title=document.createElement("div");title.className="history-title";title.textContent=c.title;
+  title.onclick=()=>{currentId=c.id;provider=c.provider||"openai";mode=c.mode||"Default";chooseProvider(provider);chooseMode(mode);render();closeSidebar()};
+  const del=document.createElement("button");del.className="del";del.textContent="×";
+  del.onclick=()=>{chats=chats.filter(x=>x.id!==c.id);if(currentId===c.id)currentId=null;save();render()};
+  row.append(title,del);area.appendChild(row);
+ });
+ if(!chats.length)area.innerHTML='<span class="muted" style="font-size:12px">Belum ada chat.</span>';
 }
-
-function openChat(id){
-  currentChatId = id;
-  const chat = currentChat();
-  if(chat){
-    setModel(chat.model || "ChatGPT");
-    setMode(chat.mode || "Default");
-  }
-  renderMessages();
-  closeSidebar();
-}
-
-function newChat(){
-  currentChatId = null;
-  $("#prompt").value = "";
-  renderMessages();
-  closeSidebar();
-  $("#prompt").focus();
-}
-
-function closeSidebar(){
-  $("#sidebar").classList.remove("open");
-}
-
-/*
-  Backend yang digunakan harus menerima POST JSON:
-  {
-    message, model, mode, instruction, history
-  }
-  Backend mengembalikan:
-  { "reply": "Jawaban dari AI" }
-
-  API key harus disimpan di server, bukan di file HTML ini.
-*/
-async function requestAI(chat){
-  const settings = apiConfig[selectedModel] || {};
-  const endpoint = settings.endpoint;
-
-  if(!endpoint){
-    return "Adly's AI — Mode Demo\n\n" +
-      "Pesan Anda telah disimpan, tetapi " + selectedModel +
-      " belum terhubung ke backend.\n\n" +
-      "Untuk mengaktifkan jawaban AI sungguhan:\n" +
-      "1. Buat backend yang terhubung ke API resmi " + selectedModel + ".\n" +
-      "2. Simpan API key secara aman di server.\n" +
-      "3. Masukkan URL backend melalui Pengaturan API.\n" +
-      "4. Pastikan backend mengembalikan JSON { reply: \"jawaban\" }.\n\n" +
-      "Mode: " + selectedMode + "\n" +
-      "Instruksi: " + modeInstruction();
-  }
-
-  const history = chat.messages.slice(0,-1).map(item => ({
-    role:item.role,
-    content:item.content
-  }));
-
-  const lastMessage = chat.messages[chat.messages.length - 1];
-
-  const response = await fetch(endpoint,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      message:lastMessage.content,
-      model:settings.model || selectedModel,
-      provider:selectedModel,
-      mode:selectedMode,
-      instruction:modeInstruction(),
-      history
-    })
-  });
-
-  if(!response.ok){
-    throw new Error("Server merespons HTTP " + response.status);
-  }
-
-  const result = await response.json();
-
-  if(typeof result.reply !== "string"){
-    throw new Error('Backend harus mengembalikan properti "reply".');
-  }
-
-  return result.reply;
-}
-
+function newChat(){currentId=null;$("#prompt").value="";render();closeSidebar()}
 async function sendMessage(text){
-  if(busy) return;
-
-  const content = text.trim();
-  if(!content) return;
-
-  let chat = currentChat();
-
-  if(!chat){
-    chat = {
-      id:makeId(),
-      title:content.slice(0,45),
-      model:selectedModel,
-      mode:selectedMode,
-      messages:[],
-      updated:Date.now()
-    };
-    appData.chats.push(chat);
-    currentChatId = chat.id;
-  }
-
-  chat.model = selectedModel;
-  chat.mode = selectedMode;
-  chat.messages.push({
-    role:"user",
-    content,
-    model:selectedModel
+ if(busy||!text.trim())return;
+ let c=chat();
+ if(!c){
+  c={id:id(),title:text.trim().slice(0,48),provider,mode,messages:[],updated:Date.now()};
+  chats.push(c);currentId=c.id;
+ }
+ c.provider=provider;c.mode=mode;
+ c.messages.push({role:"user",content:text.trim(),provider});
+ c.updated=Date.now();save();
+ $("#prompt").value="";render();
+ busy=true;$("#send").disabled=true;$("#send").textContent="Memproses…";
+ try{
+  const response=await fetch("/api/chat",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+    provider,mode,instruction:instructions[mode],
+    messages:c.messages.map(m=>({role:m.role,content:m.content}))
+   })
   });
-  chat.updated = Date.now();
-
-  saveHistory();
-  $("#prompt").value = "";
-  renderMessages();
-  renderHistory();
-
-  busy = true;
-  $("#sendBtn").disabled = true;
-  $("#sendBtn").textContent = "Memproses…";
-
-  const waiting = document.createElement("article");
-  waiting.className = "message assistant";
-  waiting.textContent = "Sedang menyiapkan jawaban…";
-  $("#messages").appendChild(waiting);
-
-  try{
-    const reply = await requestAI(chat);
-    chat.messages.push({
-      role:"assistant",
-      content:reply,
-      model:selectedModel
-    });
-  }catch(error){
-    chat.messages.push({
-      role:"assistant",
-      content:"Koneksi AI gagal: " + error.message +
-        "\n\nPeriksa endpoint backend, koneksi internet, konfigurasi CORS, dan log server.",
-      model:selectedModel
-    });
-  }finally{
-    chat.updated = Date.now();
-    saveHistory();
-    renderMessages();
-    renderHistory();
-    busy = false;
-    $("#sendBtn").disabled = false;
-    $("#sendBtn").textContent = "Kirim ➤";
-    $("#prompt").focus();
-  }
+  const result=await response.json();
+  if(!response.ok)throw new Error(result.error||"Permintaan AI gagal.");
+  c.messages.push({role:"assistant",content:result.reply,provider});
+ }catch(e){
+  c.messages.push({role:"assistant",content:"Tidak dapat menghubungi AI: "+e.message+
+   "\n\nPastikan API key sudah diatur di Vercel, backend sudah ter-deploy, dan model tersedia.",provider});
+ }finally{
+  c.updated=Date.now();save();render();
+  busy=false;$("#send").disabled=false;$("#send").textContent="Kirim ➤";
+ }
 }
-
-function openApiModal(){
-  $("#provider").value = selectedModel;
-  const settings = apiConfig[selectedModel] || {};
-  $("#endpoint").value = settings.endpoint || "";
-  $("#modelName").value = settings.model || "";
-  $("#apiModal").classList.add("show");
-}
-
-function closeApiModal(){
-  $("#apiModal").classList.remove("show");
-}
-
-function updateStatuses(){
-  let connected = 0;
-
-  ["ChatGPT","Gemini","Claude"].forEach(name => {
-    const active = !!(apiConfig[name] && apiConfig[name].endpoint);
-    const element = $("#status" + name);
-    element.textContent = active ? "Endpoint diatur" : "Belum terhubung";
-    if(active) connected++;
-  });
-
-  $("#serviceStatus").textContent = connected
-    ? connected + " endpoint dikonfigurasi"
-    : "Antarmuka siap digunakan";
-}
-
-/* Pilihan model dan mode */
-$$(".model-card").forEach(button =>
-  button.addEventListener("click", () => setModel(button.dataset.model))
-);
-
-$$(".mode-btn").forEach(button =>
-  button.addEventListener("click", () => setMode(button.dataset.mode))
-);
-
-$$(".quick-mode").forEach(button =>
-  button.addEventListener("click", () => {
-    setMode(button.dataset.mode);
-    closeSidebar();
-    $("#prompt").focus();
-  })
-);
-
-/* Contoh pertanyaan */
-$$(".example").forEach(button =>
-  button.addEventListener("click", () => {
-    $("#prompt").value = button.textContent;
-    $("#prompt").focus();
-  })
-);
-
-/* Kirim pesan */
-$("#chatForm").addEventListener("submit", event => {
-  event.preventDefault();
-  sendMessage($("#prompt").value);
-});
-
-$("#prompt").addEventListener("keydown", event => {
-  if(event.key === "Enter" && !event.shiftKey){
-    event.preventDefault();
-    $("#chatForm").requestSubmit();
-  }
-});
-
-$("#newChatBtn").addEventListener("click",newChat);
-
-/* Riwayat */
-$("#historyNav").addEventListener("click",() => {
-  const latest = [...appData.chats].sort((a,b)=>b.updated-a.updated)[0];
-  if(latest) openChat(latest.id);
-  else alert("Belum ada riwayat percakapan.");
-});
-
-$("#viewHistory").addEventListener("click",() => {
-  if(!appData.chats.length){
-    alert("Belum ada riwayat percakapan.");
-    return;
-  }
-  alert("Pilih percakapan dari daftar riwayat di panel ini.");
-});
-
-/* Menu */
-$("#modeNav").addEventListener("click",() => {
-  $("#modeRow").scrollIntoView({behavior:"smooth",block:"center"});
-  closeSidebar();
-});
-
-$("#apiNav").addEventListener("click",openApiModal);
-$("#apiTopBtn").addEventListener("click",openApiModal);
-$("#manageApiBtn").addEventListener("click",openApiModal);
-$("#upgradeBtn").addEventListener("click",openApiModal);
-
-$("#settingsNav").addEventListener("click",() => {
-  $("#infoTitle").textContent = "Pengaturan Adly's AI";
-  $("#infoBody").textContent =
-    "Gunakan tombol tema untuk beralih antara mode terang dan gelap. Riwayat chat tersimpan secara lokal di browser perangkat ini. Buka API & Koneksi untuk menghubungkan backend AI.";
-  $("#infoModal").classList.add("show");
-});
-
-$("#aboutNav").addEventListener("click",() => {
-  $("#infoTitle").textContent = "Tentang Adly's AI";
-  $("#infoBody").textContent =
-    "Adly's AI adalah antarmuka web untuk memilih layanan AI dalam satu tempat, mengelola riwayat percakapan, serta menggunakan mode belajar, coding, menulis, matematika, dan analisis. Aplikasi ini bukan produk resmi OpenAI, Google, atau Anthropic.";
-  $("#infoModal").classList.add("show");
-});
-
-/* Pengaturan endpoint */
-$("#provider").addEventListener("change",() => {
-  const name = $("#provider").value;
-  const settings = apiConfig[name] || {};
-  $("#endpoint").value = settings.endpoint || "";
-  $("#modelName").value = settings.model || "";
-});
-
-$("#saveApi").addEventListener("click",() => {
-  const name = $("#provider").value;
-  const endpoint = $("#endpoint").value.trim();
-
-  if(endpoint){
-    try{new URL(endpoint);}
-    catch{
-      alert("Masukkan URL endpoint yang valid.");
-      return;
-    }
-  }
-
-  apiConfig[name] = {
-    endpoint,
-    model:$("#modelName").value.trim()
-  };
-
-  saveConfig();
-  updateStatuses();
-  closeApiModal();
-  alert("Pengaturan tersimpan di browser ini.");
-});
-
-$("#closeModal").addEventListener("click",closeApiModal);
-$("#apiModal").addEventListener("click",event => {
-  if(event.target === $("#apiModal")) closeApiModal();
-});
-
-$("#closeInfo").addEventListener("click",() =>
-  $("#infoModal").classList.remove("show")
-);
-$("#infoModal").addEventListener("click",event => {
-  if(event.target === $("#infoModal")) $("#infoModal").classList.remove("show");
-});
-
-/* Tema */
-$("#themeToggle").addEventListener("click",() => {
-  document.body.classList.toggle("light");
-  localStorage.setItem(
-    "adlys-ai-theme",
-    document.body.classList.contains("light") ? "light" : "dark"
-  );
-});
-
-/* Sidebar HP */
-$("#menuToggle").addEventListener("click",() =>
-  $("#sidebar").classList.toggle("open")
-);
-
-document.addEventListener("click",event => {
-  if(window.innerWidth <= 680 &&
-     $("#sidebar").classList.contains("open") &&
-     !$("#sidebar").contains(event.target) &&
-     !$("#menuToggle").contains(event.target)){
-    closeSidebar();
-  }
-});
-
-/* Inisialisasi */
-if(localStorage.getItem("adlys-ai-theme") === "light"){
-  document.body.classList.add("light");
-}
-
-updateSelectedInfo();
-updateStatuses();
-renderHistory();
-renderMessages();
+$("#form").addEventListener("submit",e=>{e.preventDefault();sendMessage($("#prompt").value)});
+$("#prompt").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("#form").requestSubmit()}});
+$$(".model").forEach(b=>b.onclick=()=>chooseProvider(b.dataset.model));
+$$(".mode").forEach(b=>b.onclick=()=>chooseMode(b.dataset.mode));
+$$(".quick").forEach(b=>b.onclick=()=>{chooseMode(b.dataset.mode);closeSidebar()});
+$$(".example").forEach(b=>b.onclick=()=>{$("#prompt").value=b.textContent;$("#prompt").focus()});
+$("#new").onclick=newChat;
+$("#navChat").onclick=newChat;
+$("#navHistory").onclick=()=>{if(chats.length){const c=[...chats].sort((a,b)=>b.updated-a.updated)[0];currentId=c.id;chooseProvider(c.provider||"openai");chooseMode(c.mode||"Default");render()}else alert("Belum ada riwayat chat.");closeSidebar()};
+$("#navModes").onclick=()=>$("#modes").scrollIntoView({behavior:"smooth",block:"center"});
+$("#settings").onclick=$("#navApi").onclick=$("#connect").onclick=$("#apiButton").onclick=()=>$("#modal").classList.add("show");
+$("#closeModal").onclick=()=>$("#modal").classList.remove("show");
+$("#modal").onclick=e=>{if(e.target===$("#modal"))$("#modal").classList.remove("show")};
+$("#modelSelect").onchange=e=>chooseProvider(e.target.value);
+$("#theme").onclick=()=>{document.body.classList.toggle("light");localStorage.setItem("adlys-theme",document.body.classList.contains("light")?"light":"dark")};
+$("#menu").onclick=()=>$("#sidebar").classList.toggle("open");
+if(localStorage.getItem("adlys-theme")==="light")document.body.classList.add("light");
+render();updateInfo();
 </script>
 </body>
 </html>
